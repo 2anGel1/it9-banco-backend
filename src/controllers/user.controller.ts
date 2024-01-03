@@ -1,15 +1,9 @@
-import { storeStudentValidator } from "./../validators/user-validators"
-import PassMail from "../mail-template/pass-mail";
-import { sendMail } from "../utils/mail-utils";
-import { render } from "@react-email/render";
-import { Request, Response } from 'express'
+import { storeStudentValidator } from "../validators/user-validators";
+import { Request, Response } from 'express';
 import { hash } from "../utils/hash-utils";
 import { prisma } from "../config";
-import { generatePDF } from "../utils/pdf-utils";
-import { saveAs } from 'file-saver';
-const fs = require("fs");
 
-
+// get connected user
 export const getLoggedInUser = async (req: Request, res: Response) => {
   try {
     const userId = req.session.userId;
@@ -28,7 +22,7 @@ export const getLoggedInUser = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
-
+// store student
 export const storeStudent = async (req: Request, res: Response) => {
   try {
 
@@ -61,12 +55,6 @@ export const storeStudent = async (req: Request, res: Response) => {
           qrValue: hash(et.matricule)
         }
       });
-
-      // await sendMail({
-      //   subject: "IT9 - Banco",
-      //   to: et.email,
-      //   html: render(PassMail({ firstName: et.firstName, lastName: et.lastName }))
-      // })
     }
 
     return res.json({ message: "Etudiant crée avec succès." });
@@ -76,139 +64,37 @@ export const storeStudent = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
-
-export const storeStudentPass = async (req: Request, res: Response) => {
+// update student 
+export const updateStudent = async (req: Request, res: Response) => {
   try {
 
     const reqBody = req.body;
-
-    const student = await prisma.etutiant.findUnique({
+    const existingStudent = await prisma.etutiant.findUnique({
       where: {
         id: reqBody.studentId
       }
     });
 
-    if (student) {
-      const existingPass = await prisma.pass.findUnique({
-        where: {
-          etudiantId: student.id
-        }
-      });
-
-      if (existingPass) {
-        return res.status(400).json({ message: "Cet étudiant a déja un ticekt." });
-      }
-
-      await prisma.pass.create({
-        data: {
-          etudiantId: student.id,
-          qrValue: hash(student.matricule)
-        }
-      });
-
-      return res.json({ message: "Ticket généré avec succès." });
+    if (!existingStudent) {
+      return res.status(400).json({ message: "Cet étudiant n'existe déja." });
     }
 
-    return res.status(400).json({ message: "Cet étudiant n'existe pas." });
+    await prisma.etutiant.update({
+      where: {
+        id: existingStudent.id
+      },
+      data: {
+        firstName: reqBody.firstName,
+        lastName: reqBody.lastName,
+        class: reqBody.class,
+        email: reqBody.email
+      }
+    });
+
+    return res.json({ message: "Etudiant mis à jour avec succès." });
 
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
-
-export const sendStudentPass = async (req: Request, res: Response) => {
-  try {
-
-    const student = await prisma.etutiant.findUnique({
-      where: {
-        id: req.params.studentId
-      }
-    });
-
-    if (!student) {
-      return res.status(400).json({ message: "Cet étudiant n'existe pas." });
-    }
-
-    let studentPass = await prisma.pass.findUnique({
-      where: {
-        etudiantId: student.id
-      }
-    });
-
-    if (!studentPass) {
-      studentPass = await prisma.pass.create({
-        data: {
-          etudiantId: student.id,
-          qrValue: hash(student.matricule)
-        }
-      });
-    }
-
-    // const result = await generatePDF({ "data": "this is a message" });
-
-    await sendMail({
-      subject: "IT9 - Banco",
-      to: student.email,
-      html: render(PassMail({ firstName: student.firstName, lastName: student.lastName, logoPath: "/Users/scopy/Documents/it9-banco-backend/src/assets/images/bancoLogo.png" })),
-      attachements: [
-        // {
-        //   filename: "example.pdf",
-        //   path: "/Users/scopy/Documents/it9-banco-backend/src/assets/pdf/example.pdf",
-        // },
-      ]
-    });
-
-    return res.json({ message: "" });
-
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
-  }
-};
-
-export const downloadStudentPass = async (req: Request, res: Response) => {
-  try {
-    try {
-
-      const student = await prisma.etutiant.findUnique({
-        where: {
-          id: req.params.studentId
-        }
-      });
-
-      if (!student) {
-        return res.status(400).json({ message: "Cet étudiant n'existe pas." });
-      }
-
-      let studentPass = await prisma.pass.findUnique({
-        where: {
-          etudiantId: student.id
-        }
-      });
-
-      if (!studentPass) {
-        studentPass = await prisma.pass.create({
-          data: {
-            etudiantId: student.id,
-            qrValue: hash(student.matricule)
-          }
-        });
-      }
-
-      const result = await generatePDF({ "data": "this is a message" });
-
-      res.setHeader("Content-Type", "application/pdf");
-      res.setHeader("Content-Disposition", `attachment; filename=export.pdf`);
-
-      result.pipe(res);
-
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Internal Server Error' });
-    }
-  } catch (error) {
-
-  }
-}

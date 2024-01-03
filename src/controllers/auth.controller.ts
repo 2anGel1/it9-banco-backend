@@ -1,29 +1,28 @@
-import {
-  loginValidator,
-  newPasswordValidator,
-  passwordResetValidator,
-  signupValidator,
-  verificationForPasswordResetValidator,
-} from "../validators/auth-validators";
 import { comparePlainTextToHashedText, hash } from "../utils/hash-utils";
+import PasswordResetMail from "../mail-template/password-reset-mail";
 import { createSession, leaveSession } from "../utils/session-utils";
 import { generateRandomCode } from "../utils/code-utils";
+import {
+  verificationForPasswordResetValidator,
+  passwordResetValidator,
+  newPasswordValidator,
+  signupValidator,
+  loginValidator,
+} from "../validators/auth-validators";
 import {
   passwordResetCookie,
   sessionIdCookie,
 } from "../constants/cookies-constants";
+import { sendMail } from "../utils/mail-utils";
+import { render } from "@react-email/render";
+import { Request, Response } from 'express';
+import { prisma } from "../config";
 import {
   generatePasswordResetToken,
   verifyPasswordResetToken,
 } from "../utils/token-utils";
-import { render } from "@react-email/render";
-import { sendMail } from "../utils/mail-utils";
-import PasswordResetMail from "../mail-template/password-reset-mail";
-import { prisma } from "../config";
-import { Request, Response } from 'express'
 
-
-//
+// login user
 export const login = async (req: Request, res: Response) => {
   const reqBody = await req.body;
 
@@ -50,8 +49,7 @@ export const login = async (req: Request, res: Response) => {
   res.cookie(sessionIdCookie.name, sessionId, sessionIdCookie.options)
   return res.json({ message: "Login success" });
 };
-
-//
+// logout user
 export const logout = async (req: Request, res: Response) => {
   try {
     const sessionToken = req.body.session.sessionToken;
@@ -70,8 +68,7 @@ export const logout = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
-
-//
+// signup user
 export const signup = async (req: Request, res: Response) => {
   const reqBody = await req.body;
   let userData = !req.body.seed ? await signupValidator.validate(reqBody) : { pseudo: "admin", email: "admin@gmail.com", password: "admin" };
@@ -100,9 +97,7 @@ export const signup = async (req: Request, res: Response) => {
     return res.status(400).json({ message: "Une erreur inconnue ai survenue !" });
   }
 };
-
-//
-//
+// password reset request
 export const passwordReset = async (req: Request, res: Response) => {
   const reqBody = await req.body;
   const { email } = await passwordResetValidator.validate(reqBody);
@@ -119,7 +114,7 @@ export const passwordReset = async (req: Request, res: Response) => {
   const plainCode = generateRandomCode();
   const hashedCode = hash(plainCode);
   console.log(plainCode);
-  
+
   const passwordReset = await prisma.passwordReset.create({
     data: {
       code: hashedCode,
@@ -142,12 +137,11 @@ export const passwordReset = async (req: Request, res: Response) => {
 
   return res.status(200).json({ message: "A code has been sent to your e-mail address" });
 };
-
-//
+// paswword reset verification 
 export const verificationForPasswordReset = async (req: Request, res: Response) => {
   try {
     const reqBody = req.body;
-    
+
     const passwordResetToken = req.cookies[passwordResetCookie.name];
     const { code, token } = await verificationForPasswordResetValidator.validate({
       code: reqBody.code,
@@ -209,8 +203,7 @@ export const verificationForPasswordReset = async (req: Request, res: Response) 
     return res.status(400).json({ message: error });
   }
 };
-
-//
+// new password generation
 export const newPassword = async (req: Request, res: Response) => {
   try {
     const reqBody = req.body;
@@ -260,8 +253,6 @@ export const newPassword = async (req: Request, res: Response) => {
         passwordHash: newPassword,
       },
     });
-
-    const sessionId = await createSession(user.id);
 
     // Effacez le cookie passwordResetCookie
     res.clearCookie(passwordResetCookie.name);

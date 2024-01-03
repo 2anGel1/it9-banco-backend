@@ -1,20 +1,17 @@
 import React from "react";
-import ReactPDF, {
+import {
     Page,
     Text,
     View,
     Document,
     StyleSheet,
+    Image
 } from "@react-pdf/renderer";
 
-import { REACT_APP_ROOT_PATH } from "../config/index"
-
-type TemplateData = {
-    data: string;
-};
 
 interface PDFProps {
-    data: TemplateData;
+    firstName?: string;
+    lastName?: string;
 }
 
 const styles = StyleSheet.create({
@@ -59,28 +56,30 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: "flex-end"
     },
+    qrcode: {
+        width: "80px",
+        height: "80px"
+    }
 });
 
-const PDF = ({ data }: PDFProps) => {
+const PassPDF = ({ firstName, lastName }: PDFProps) => {
     return (
         <Document>
             <Page size="A4" style={styles.page}>
                 <View style={styles.section}>
                     <View style={styles.columnParent}>
                         <View style={styles.columnStart}>
-                            <Text style={styles.paragraph}>{data.data}</Text>
+                            <Text style={styles.paragraph}>{firstName} {lastName}</Text>
+                            <Image src={process.cwd() + "/src/assets/qrcodes/qrcode.png"} style={styles.qrcode} />
                         </View>
                         <View style={styles.columnEnd}>
-                            <Text style={styles.heading}>Receipt</Text>
-                            <Text style={styles.paragraph}>Receipt number: 0102030405</Text>
-                            <Text style={styles.paragraph}>Date paid: Today</Text>
-                            <Text style={styles.paragraph}>Payment method: MOOV </Text>
                         </View>
                     </View>
                     <View style={styles.divider}></View>
                     <View>
-                        <Text style={styles.statement}>hello - hello</Text>
-                        <Text style={styles.paragraph}>Thank you for your business!</Text>
+                        <Text style={styles.paragraph}>
+                            Ticket généré le {new Date().getDate()}/{new Date().getMonth() + 1}/{new Date().getFullYear()}
+                        </Text>
                     </View>
                 </View>
             </Page>
@@ -88,6 +87,4 @@ const PDF = ({ data }: PDFProps) => {
     );
 };
 
-export default async (data: TemplateData) => {
-    return await ReactPDF.render(<PDF {...{ data }} />, `${__dirname}/../assets/pdf/example.pdf`);
-};
+export default PassPDF;

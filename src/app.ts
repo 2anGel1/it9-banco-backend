@@ -1,11 +1,12 @@
+const cookieParser = require('cookie-parser');
+import authRoute from "./routes/auth.route";
+import userRoute from "./routes/user.route";
+import passRoute from "./routes/pass.route";
+const session = require("express-session");
+import { Session } from "express-session";
 import express from "express";
 const cors = require("cors");
-const cookieParser = require('cookie-parser');
-const session = require("express-session");
 import ms from "ms";
-import authRoute from "./routes/auth.route";
-import { Session } from "express-session";
-import userRoute from "./routes/user.route";
 
 declare module "express" {
   interface Request {
@@ -33,8 +34,10 @@ app.use(
     },
   })
 );
+
 app.use(express.json());
-app.use(basePath + "/auth", authRoute);
 app.use(basePath + "/student", userRoute);
+app.use(basePath + "/auth", authRoute);
+app.use(basePath + "/pass", passRoute);
 
 export { app };

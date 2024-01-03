@@ -8,7 +8,6 @@ import {
   Section,
 } from "@react-email/components";
 import * as React from "react";
-import Logo from "./logo";
 
 interface BaseMail {
   children: React.ReactNode;
@@ -20,11 +19,6 @@ export const BaseMail = ({ children }: BaseMail) => (
       <Font
         fontFamily="Kumbh Sans"
         fallbackFontFamily="Verdana"
-        // webFont={{
-        //   url: "https://fonts.gstatic.com/s/roboto/v27/KFOmCnqEu92Fr1Mu4mxKKTU1Kg.woff2",
-        //   format: "woff2",
-        // }}
-        // fontWeight={400}
         fontStyle="normal"
       />
     </Head>
@@ -33,7 +27,7 @@ export const BaseMail = ({ children }: BaseMail) => (
         {children}
         <Section>
           <Text style={footer}>
-           #IT9Léopard &copy;{new Date().getFullYear()}
+           #IT9Léopard &copy;scopy{new Date().getFullYear()}
           </Text>
         </Section>
       </Container>
@@ -96,4 +90,5 @@ export const footer = {
   color: "#8898aa",
   fontSize: "12px",
   lineHeight: "16px",
+  padding: "0 48px",
 };

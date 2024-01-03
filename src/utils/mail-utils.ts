@@ -5,10 +5,10 @@ interface Mail {
   subject: string;
   to: string;
   html?: string;
-  attachements?: Array<Object>;
+  attachments?: Array<Object>;
 }
 
-export const sendMail = async ({ subject, to, html, attachements}: Mail) => {
+export const sendMail = async ({ subject, to, html, attachments }: Mail) => {
   console.log("sending mail");
   const transporter = nodemailer.createTransport({
     service: "gmail",
@@ -18,14 +18,12 @@ export const sendMail = async ({ subject, to, html, attachements}: Mail) => {
     },
   });
 
-  console.log(attachements);
-  
   const mailOptions = {
     from: SENDER_MAIL_ADDRESS,
-    to: to,
+    to,
     subject,
     html,
-    attachements: attachements
+    attachments
   };
 
   try {

@@ -1,24 +1,18 @@
-import { Router } from "express";
+import { requireAuth } from "../middlewares/auth.middleware";
 import {
-  downloadStudentPass,
-  storeStudentPass,
-  sendStudentPass,
   getLoggedInUser,
+  updateStudent,
   storeStudent,
 } from "../controllers/user.controller";
-import { requireAuth } from "../middlewares/auth.middleware";
+import { Router } from "express";
 
 const userRoute = Router();
 
+// get connected user
 userRoute.get("/user", requireAuth, getLoggedInUser);
-
-// create student
+// upadte student
+userRoute.put("/update", requireAuth, updateStudent);
+// store student
 userRoute.post("/store", requireAuth, storeStudent);
-// generate pass
-userRoute.post("/store/pass", requireAuth, storeStudentPass);
-// send pass by email
-userRoute.get("/pass/send/:studentId", requireAuth, sendStudentPass);
-// download pass
-userRoute.get("/pass/dowload/:studentId", requireAuth, downloadStudentPass);
 
 export default userRoute;
