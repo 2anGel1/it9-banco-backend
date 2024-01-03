@@ -1,6 +1,7 @@
 import PassMail from "../mail-template/pass-mail";
 import { generatePDF, logoAttachment, generateQRCODE } from "../utils/pdf-utils";
 import { sendMail } from "../utils/mail-utils";
+import { rootPath } from "../utils/code-utils";
 import { render } from "@react-email/render";
 import { Request, Response } from 'express';
 import { hash } from "../utils/hash-utils";
@@ -72,17 +73,17 @@ export const sendPass = async (req: Request, res: Response) => {
     }
 
     const fileName = student.lastName + student.firstName + ".pdf";
-
-    generateQRCODE(studentPass.qrValue)
-    await generatePDF(fileName, student.firstName, student.lastName);
+    const qrcodePath = rootPath + "/assets/qrcodes/qrcode.png";
+    await generateQRCODE(studentPass.qrValue);
+    await generatePDF(fileName, student.firstName, student.lastName, false, qrcodePath);
     await sendMail({
       subject: "IT9 - Banco",
       to: student.email,
-      html: render(PassMail({ firstName: student.firstName, lastName: student.lastName})),
+      html: render(PassMail({ firstName: student.firstName, lastName: student.lastName })),
       attachments: [
         {
           filename: fileName,
-          path: process.cwd() + "/src/assets/pdf/" + fileName,
+          path: rootPath + "/assets/pdf/" + fileName,
         },
         logoAttachment
       ]
@@ -119,10 +120,11 @@ export const downloadPass = async (req: Request, res: Response) => {
       if (!studentPass) {
         return res.status(400).json({ message: "Cet étudiant n'a pas de ticket." });
       }
-      
+
       generateQRCODE(studentPass.qrValue)
+      const qrcodePath = rootPath + "/assets/qrcodes/qrcode.png";
       const fileName = student.lastName + student.firstName + ".pdf";
-      const result = await generatePDF(fileName, student.firstName, student.lastName, true);
+      const result = await generatePDF(fileName, student.firstName, student.lastName, true, qrcodePath);
 
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader("Content-Disposition", `attachment; filename=${fileName}`);

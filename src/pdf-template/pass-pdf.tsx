@@ -7,11 +7,13 @@ import {
     StyleSheet,
     Image
 } from "@react-pdf/renderer";
+import { rootPath } from "../utils/code-utils";
 
 
 interface PDFProps {
     firstName?: string;
     lastName?: string;
+    qrcodePath?: string;
 }
 
 const styles = StyleSheet.create({
@@ -62,7 +64,7 @@ const styles = StyleSheet.create({
     }
 });
 
-const PassPDF = ({ firstName, lastName }: PDFProps) => {
+const PassPDF = ({ firstName, lastName, qrcodePath }: PDFProps) => {
     return (
         <Document>
             <Page size="A4" style={styles.page}>
@@ -70,7 +72,7 @@ const PassPDF = ({ firstName, lastName }: PDFProps) => {
                     <View style={styles.columnParent}>
                         <View style={styles.columnStart}>
                             <Text style={styles.paragraph}>{firstName} {lastName}</Text>
-                            <Image src={process.cwd() + "/src/assets/qrcodes/qrcode.png"} style={styles.qrcode} />
+                            <Image src={qrcodePath} style={styles.qrcode} />
                         </View>
                         <View style={styles.columnEnd}>
                         </View>

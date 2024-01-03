@@ -1,19 +1,22 @@
 import PassPDF from "../pdf-template/pass-pdf"
 import ReactPDF from "@react-pdf/renderer";
 const qr = require("qrcode");
+import { rootPath } from "../utils/code-utils";
 
-export const generatePDF = async (fileName?: string, firstName?: string, lastName?: string, download?: boolean) => {
-    const result = download ? await ReactPDF.renderToStream(PassPDF({ firstName, lastName })) : await ReactPDF.render(PassPDF({ firstName, lastName }), `${process.cwd()}/src/assets/pdf/${fileName}`);
+
+
+export const generatePDF = async (fileName?: string, firstName?: string, lastName?: string, download?: boolean, qrcodePath?: string) => {
+    const result = download ? await ReactPDF.renderToStream(PassPDF({ firstName, lastName, qrcodePath })) : await ReactPDF.render(PassPDF({ firstName, lastName, qrcodePath }), `${rootPath}/assets/pdf/${fileName}`);
     return result;
 }
 
 export const logoAttachment = {
     filename: "bancoLogo.png",
-    path: process.cwd() + "/src/assets/images/bancoLogo.png",
+    path: rootPath + "/assets/images/bancoLogo.png",
     cid: "bancoLogo",
 };
 
-export const generateQRCODE = (data: string) => {
+export const generateQRCODE = async (data: string) => {
 
     const options = {
         errorCorrectionLevel: 'H',
@@ -25,9 +28,12 @@ export const generateQRCODE = (data: string) => {
             light: '#ffffff'
         }
     };
-
-    qr.toFile(process.cwd() + "/src/assets/qrcodes/qrcode.png", data, options, (err: Error) => {
-        if (err) throw err;
+    const qrcodePath = rootPath + "/assets/qrcodes/qrcode.png";
+    await qr.toFile(qrcodePath, data, options, (err: Error) => {
+        if (err) {
+            console.log("ERREUR DE GENERATION DU QRCODE");
+            throw err;
+        }
         console.log('QR code generated successfully!');
     });
 }
