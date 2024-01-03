@@ -47,7 +47,7 @@ app.use(basePath + "/pass", passRoute);
 app.use('/ressources', express.static(path.join(__dirname, 'assets')));
 
 var process = require('child_process');
-process.exec('ls',function (err: any, stdout:any ,stderr:any) {
+process.exec('ls src/assets',function (err: any, stdout:any ,stderr:any) {
     if (err) {
         console.log("\n"+stderr);
     } else {
