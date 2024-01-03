@@ -43,8 +43,16 @@ app.use(basePath + "/student", userRoute);
 app.use(basePath + "/auth", authRoute);
 app.use(basePath + "/pass", passRoute);
 
-console.log(path.join(__dirname, 'assets'));
 
 app.use('/ressources', express.static(path.join(__dirname, 'assets')));
+
+var process = require('child_process');
+process.exec('ls',function (err: any, stdout:any ,stderr:any) {
+    if (err) {
+        console.log("\n"+stderr);
+    } else {
+        console.log(stdout);
+    }
+});
 
 export { app };
