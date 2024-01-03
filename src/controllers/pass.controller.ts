@@ -73,8 +73,8 @@ export const sendPass = async (req: Request, res: Response) => {
     }
 
     const fileName = student.lastName + student.firstName + ".pdf";
-    const qrcodePath = rootPath + "/assets/qrcodes/qrcode.png";
-    await generateQRCODE(studentPass.qrValue);
+    const qrcodePath = rootPath + "/qrcodes/" + student.lastName + ".png";
+    await generateQRCODE(studentPass.qrValue, qrcodePath);
     await generatePDF(fileName, student.firstName, student.lastName, false, qrcodePath);
     await sendMail({
       subject: "IT9 - Banco",
@@ -83,7 +83,7 @@ export const sendPass = async (req: Request, res: Response) => {
       attachments: [
         {
           filename: fileName,
-          path: rootPath + "/assets/pdf/" + fileName,
+          path: rootPath + "/pdf/" + fileName,
         },
         logoAttachment
       ]
@@ -121,9 +121,9 @@ export const downloadPass = async (req: Request, res: Response) => {
         return res.status(400).json({ message: "Cet étudiant n'a pas de ticket." });
       }
 
-      generateQRCODE(studentPass.qrValue)
-      const qrcodePath = rootPath + "/assets/qrcodes/qrcode.png";
+      const qrcodePath = rootPath + "/qrcodes/" + student.lastName + student.firstName + ".png";
       const fileName = student.lastName + student.firstName + ".pdf";
+      generateQRCODE(studentPass.qrValue, qrcodePath)
       const result = await generatePDF(fileName, student.firstName, student.lastName, true, qrcodePath);
 
       res.setHeader("Content-Type", "application/pdf");

@@ -6,7 +6,9 @@ const session = require("express-session");
 import { Session } from "express-session";
 import express from "express";
 const cors = require("cors");
+import path from 'path';
 import ms from "ms";
+import { rootPath } from "./utils/code-utils";
 
 declare module "express" {
   interface Request {
@@ -35,9 +37,14 @@ app.use(
   })
 );
 
+
 app.use(express.json());
 app.use(basePath + "/student", userRoute);
 app.use(basePath + "/auth", authRoute);
 app.use(basePath + "/pass", passRoute);
+
+console.log(path.join(__dirname, 'assets'));
+
+app.use('/ressources', express.static(path.join(__dirname, 'assets')));
 
 export { app };
