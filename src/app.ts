@@ -21,7 +21,7 @@ app.use(cookieParser());
 const basePath = "/api";
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "*",
     credentials: true,
   })
 );
