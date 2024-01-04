@@ -12,30 +12,41 @@ import { prisma } from "../config";
 
 // login user
 export const login = async (req: Request, res: Response) => {
-  const reqBody = await req.body;
+  try {
 
-  const { email, password } = await loginValidator.validate(reqBody);
+    const reqBody = await req.body;
+    const { email, password } = await loginValidator.validate(reqBody);
 
-  const user = await prisma.user.findUnique({
-    where: {
-      email,
-    },
-  });
+    const user = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
 
-  if (!user) {
-    return res.status(400).json({ message: "Email incorrecte." });
+    if (!user) {
+      return res.status(400).json({ message: "Email incorrecte." });
+    }
+    const isPasswordValid = comparePlainTextToHashedText(
+      password,
+      user.passwordHash!
+    );
+    if (!isPasswordValid) {
+      return res.status(400).json({ message: "Mot de passe incorrect." });
+    }
+
+    const sessionId = await createSession(user.id);
+    res.cookie(sessionIdCookie.name, sessionId, sessionIdCookie.options)
+    return res.status(200).json({ status: true, message: "Login success" });
+
+  } catch (error: any) {
+    // console.log(error);
+    if (error.code == "E_VALIDATION_ERROR") {
+      console.log("Erreur de validation");
+      return res.status(error.status).json({ message: "Remplissez tous les champs correctement" })
+    }
+    return res.status(500).json({ message: "Erreur interne au serveur" });
   }
-  const isPasswordValid = comparePlainTextToHashedText(
-    password,
-    user.passwordHash!
-  );
-  if (!isPasswordValid) {
-    return res.status(400).json({ message: "Mot de passe incorrect." });
-  }
 
-  const sessionId = await createSession(user.id);
-  res.cookie(sessionIdCookie.name, sessionId, sessionIdCookie.options)
-  return res.status(200).json({ status: true, message: "Login success" });
 };
 // logout user
 export const logout = async (req: Request, res: Response) => {
@@ -58,10 +69,14 @@ export const logout = async (req: Request, res: Response) => {
 };
 // signup user
 export const signup = async (req: Request, res: Response) => {
-  const reqBody = await req.body;
-  let userData = !req.body.seed ? await signupValidator.validate(reqBody) : { pseudo: "admin", email: "admin@gmail.com", password: "admin" };
-  const { email, password, pseudo } = userData;
+
   try {
+
+    const reqBody = await req.body;
+    let userData = !req.body.seed ? await signupValidator.validate(reqBody) : { pseudo: "admin", email: "admin@gmail.com", password: "admin" };
+    const { email, password, pseudo } = userData;
+
+
     const existingUser = await prisma.user.findUnique({
       where: {
         email,
@@ -82,7 +97,12 @@ export const signup = async (req: Request, res: Response) => {
     return res.status(200).json({ status: true, message: "Utilisateur crée avec succès." });
 
   } catch (error: any) {
-    return res.status(400).json({ message: "Une erreur inconnue ai survenue !" });
+    // console.log(error);
+    if (error.code == "E_VALIDATION_ERROR") {
+      console.log("Erreur de validation");
+      return res.status(error.status).json({ message: "Remplissez tous les champs correctement" })
+    }
+    return res.status(500).json({ message: "Erreur interne au serveur" });
   }
 };
 // password reset request

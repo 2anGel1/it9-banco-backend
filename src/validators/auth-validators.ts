@@ -8,8 +8,8 @@ const jwtSchema = vine.string().jwt();
 // usernameSchema
 
 const loginSchema = vine.object({
-  email: emailSchema.optional(),
   password: passwordSchema,
+  email: emailSchema,
 });
 
 const signupSchema = vine.object({
