@@ -10,7 +10,7 @@ import { Router } from "express";
 const passRoute = Router();
 
 // download pass
-passRoute.get("/download/:studentId", downloadPass);
+passRoute.get("/download/:studentId", requireAuth, downloadPass);
 // send pass by email
 passRoute.get("/send/:studentId", requireAuth, sendPass);
 // generate pass

@@ -3,20 +3,15 @@ import { Request, Response } from 'express';
 import { hash } from "../utils/hash-utils";
 import { prisma } from "../config";
 
-// get connected user
-export const getLoggedInUser = async (req: Request, res: Response) => {
+// get all students
+export const getAll = async (req: Request, res: Response) => {
   try {
-    const userId = req.session.userId;
-    if (!userId) {
-      res.status(401).json({ message: 'User not authenticated' });
-      return;
-    }
-    const user = await prisma.user.findUnique({ where: { id: userId } });
-    if (!user) {
-      res.status(400).json({ message: "User doesn't exist" });
-      return;
-    }
-    res.json({ user });
+    const students = await prisma.etutiant.findMany({
+      include: {
+        pass: true
+      }
+    });
+    res.json({ data: students });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
@@ -98,3 +93,4 @@ export const updateStudent = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+

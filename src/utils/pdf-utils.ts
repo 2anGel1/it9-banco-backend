@@ -1,12 +1,13 @@
-import PassPDF from "../pdf-template/pass-pdf"
+import { readFilePath, writeFilePath } from "../utils/code-utils";
+import PassCard from "../pdf-template/pass-pdf";
 import ReactPDF from "@react-pdf/renderer";
 const qr = require("qrcode");
-import { readFilePath, writeFilePath } from "../utils/code-utils";
+const fs = require('fs');
 
 
 
-export const generatePDF = async (fileName?: string, firstName?: string, lastName?: string, download?: boolean, qrcodePath?: string) => {
-    const result = download ? await ReactPDF.renderToStream(PassPDF({ firstName, lastName, qrcodePath })) : await ReactPDF.render(PassPDF({ firstName, lastName, qrcodePath }), `${writeFilePath}/pdf/${fileName}`);
+export const generatePDF = async (fileName?: string, user?: any, download?: boolean, qrcodePath?: string) => {
+    const result = download ? await ReactPDF.renderToStream(PassCard({ user, qrcodePath })) : await ReactPDF.render(PassCard({ user, qrcodePath }), `${writeFilePath}/pdf/${fileName}`);
     return result;
 }
 
@@ -34,5 +35,17 @@ export const generateQRCODE = async (data: string, qrcodePath: string) => {
             throw err;
         }
         console.log('QR code generated successfully!');
+    });
+}
+
+export const deleteFile = async (filepath: string) => {
+    fs.unlink(filepath, function (err: any) {
+        if (err && err.code == 'ENOENT') {
+            console.info("File doesn't exist, won't remove it.");
+        } else if (err) {
+            console.error("Error occurred while trying to remove file");
+        } else {
+            console.info(`File deleted`);
+        }
     });
 }

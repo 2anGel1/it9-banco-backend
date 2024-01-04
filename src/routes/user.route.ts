@@ -1,15 +1,15 @@
 import { requireAuth } from "../middlewares/auth.middleware";
 import {
-  getLoggedInUser,
   updateStudent,
   storeStudent,
+  getAll,
 } from "../controllers/user.controller";
 import { Router } from "express";
 
 const userRoute = Router();
 
 // get connected user
-userRoute.get("/user", requireAuth, getLoggedInUser);
+userRoute.get("/all", requireAuth, getAll);
 // upadte student
 userRoute.put("/update", requireAuth, updateStudent);
 // store student

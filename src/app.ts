@@ -37,22 +37,13 @@ app.use(
   })
 );
 
-
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+
 app.use(basePath + "/student", userRoute);
 app.use(basePath + "/auth", authRoute);
 app.use(basePath + "/pass", passRoute);
 
-
 app.use('/ressources', express.static(path.join(__dirname, 'assets')));
-
-// var process = require('child_process');
-// process.exec('ls src/assets',function (err: any, stdout:any ,stderr:any) {
-//     if (err) {
-//         console.log("\n"+stderr);
-//     } else {
-//         console.log(stdout);
-//     }
-// });
 
 export { app };

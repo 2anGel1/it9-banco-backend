@@ -1,12 +1,11 @@
 import PassMail from "../mail-template/pass-mail";
-import { generatePDF, logoAttachment, generateQRCODE } from "../utils/pdf-utils";
+import { generatePDF, logoAttachment, generateQRCODE, deleteFile } from "../utils/pdf-utils";
 import { sendMail } from "../utils/mail-utils";
 import { readFilePath, writeFilePath } from "../utils/code-utils";
 import { render } from "@react-email/render";
 import { Request, Response } from 'express';
 import { hash } from "../utils/hash-utils";
 import { prisma } from "../config";
-
 
 // store student pass
 export const storePass = async (req: Request, res: Response) => {
@@ -75,9 +74,9 @@ export const sendPass = async (req: Request, res: Response) => {
     const fileName = student.lastName + ".pdf";
     const qrcodeWritePath = writeFilePath + "/qrcodes/" + student.lastName + ".png";
     const qrcodeReadPath = readFilePath + "/qrcodes/" + student.lastName + ".png";
-    
+
     await generateQRCODE(studentPass.qrValue, qrcodeWritePath);
-    await generatePDF(fileName, student.firstName, student.lastName, false, qrcodeReadPath);
+    await generatePDF(fileName, { firstName: student.firstName, lastName: student.lastName, classe: student.class }, false, qrcodeReadPath);
     await sendMail({
       subject: "IT9 - Banco",
       to: student.email,
@@ -90,6 +89,9 @@ export const sendPass = async (req: Request, res: Response) => {
         logoAttachment
       ]
     });
+
+    await deleteFile(writeFilePath + "/pdf/" + fileName);
+    await deleteFile(qrcodeWritePath);
 
     return res.json({ message: "Ticket envoyé avec succès." });
 
@@ -126,10 +128,11 @@ export const downloadPass = async (req: Request, res: Response) => {
       const fileName = student.lastName + ".pdf";
       const qrcodeWritePath = writeFilePath + "/qrcodes/" + student.lastName + ".png";
       const qrcodeReadPath = readFilePath + "/qrcodes/" + student.lastName + ".png";
-      
-      await generateQRCODE(studentPass.qrValue, qrcodeWritePath);
-      const result = await generatePDF(fileName, student.firstName, student.lastName, true, qrcodeReadPath);
 
+      await generateQRCODE(studentPass.qrValue, qrcodeWritePath);
+      const result = await generatePDF(fileName, { firstName: student.firstName, lastName: student.lastName, classe: student.class }, true, qrcodeReadPath);
+      await deleteFile(qrcodeWritePath);
+      
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader("Content-Disposition", `attachment; filename=${fileName}`);
 
