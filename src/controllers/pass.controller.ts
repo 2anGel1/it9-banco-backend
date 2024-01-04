@@ -1,7 +1,7 @@
 import PassMail from "../mail-template/pass-mail";
 import { generatePDF, logoAttachment, generateQRCODE } from "../utils/pdf-utils";
 import { sendMail } from "../utils/mail-utils";
-import { rootPath } from "../utils/code-utils";
+import { readFilePath, writeFilePath } from "../utils/code-utils";
 import { render } from "@react-email/render";
 import { Request, Response } from 'express';
 import { hash } from "../utils/hash-utils";
@@ -72,10 +72,12 @@ export const sendPass = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Cet étudiant n'a pas de ticket." });
     }
 
-    const fileName = student.lastName + student.firstName + ".pdf";
-    const qrcodePath = rootPath + "/qrcodes/" + student.lastName + ".png";
-    await generateQRCODE(studentPass.qrValue, qrcodePath);
-    await generatePDF(fileName, student.firstName, student.lastName, false, qrcodePath);
+    const fileName = student.lastName + ".pdf";
+    const qrcodeWritePath = writeFilePath + "/qrcodes/" + student.lastName + ".png";
+    const qrcodeReadPath = readFilePath + "/qrcodes/" + student.lastName + ".png";
+    
+    await generateQRCODE(studentPass.qrValue, qrcodeWritePath);
+    await generatePDF(fileName, student.firstName, student.lastName, false, qrcodeReadPath);
     await sendMail({
       subject: "IT9 - Banco",
       to: student.email,
@@ -83,7 +85,7 @@ export const sendPass = async (req: Request, res: Response) => {
       attachments: [
         {
           filename: fileName,
-          path: rootPath + "/pdf/" + fileName,
+          path: readFilePath + "/pdf/" + fileName,
         },
         logoAttachment
       ]
@@ -121,10 +123,12 @@ export const downloadPass = async (req: Request, res: Response) => {
         return res.status(400).json({ message: "Cet étudiant n'a pas de ticket." });
       }
 
-      const qrcodePath = rootPath + "/qrcodes/" + student.lastName + student.firstName + ".png";
-      const fileName = student.lastName + student.firstName + ".pdf";
-      generateQRCODE(studentPass.qrValue, qrcodePath)
-      const result = await generatePDF(fileName, student.firstName, student.lastName, true, qrcodePath);
+      const fileName = student.lastName + ".pdf";
+      const qrcodeWritePath = writeFilePath + "/qrcodes/" + student.lastName + ".png";
+      const qrcodeReadPath = readFilePath + "/qrcodes/" + student.lastName + ".png";
+      
+      await generateQRCODE(studentPass.qrValue, qrcodeWritePath);
+      const result = await generatePDF(fileName, student.firstName, student.lastName, true, qrcodeReadPath);
 
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader("Content-Disposition", `attachment; filename=${fileName}`);

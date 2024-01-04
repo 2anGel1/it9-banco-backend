@@ -8,7 +8,7 @@ import express from "express";
 const cors = require("cors");
 import path from 'path';
 import ms from "ms";
-import { rootPath } from "./utils/code-utils";
+import { readFilePath } from "./utils/code-utils";
 
 declare module "express" {
   interface Request {
@@ -46,13 +46,13 @@ app.use(basePath + "/pass", passRoute);
 
 app.use('/ressources', express.static(path.join(__dirname, 'assets')));
 
-var process = require('child_process');
-process.exec('ls src/assets',function (err: any, stdout:any ,stderr:any) {
-    if (err) {
-        console.log("\n"+stderr);
-    } else {
-        console.log(stdout);
-    }
-});
+// var process = require('child_process');
+// process.exec('ls src/assets',function (err: any, stdout:any ,stderr:any) {
+//     if (err) {
+//         console.log("\n"+stderr);
+//     } else {
+//         console.log(stdout);
+//     }
+// });
 
 export { app };

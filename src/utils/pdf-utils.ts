@@ -1,18 +1,18 @@
 import PassPDF from "../pdf-template/pass-pdf"
 import ReactPDF from "@react-pdf/renderer";
 const qr = require("qrcode");
-import { rootPath } from "../utils/code-utils";
+import { readFilePath, writeFilePath } from "../utils/code-utils";
 
 
 
 export const generatePDF = async (fileName?: string, firstName?: string, lastName?: string, download?: boolean, qrcodePath?: string) => {
-    const result = download ? await ReactPDF.renderToStream(PassPDF({ firstName, lastName, qrcodePath })) : await ReactPDF.render(PassPDF({ firstName, lastName, qrcodePath }), `${rootPath}/pdf/${fileName}`);
+    const result = download ? await ReactPDF.renderToStream(PassPDF({ firstName, lastName, qrcodePath })) : await ReactPDF.render(PassPDF({ firstName, lastName, qrcodePath }), `${writeFilePath}/pdf/${fileName}`);
     return result;
 }
 
 export const logoAttachment = {
     filename: "bancoLogo.png",
-    path: rootPath + "/images/bancoLogo.png",
+    path: readFilePath + "/images/bancoLogo.png",
     cid: "bancoLogo",
 };
 

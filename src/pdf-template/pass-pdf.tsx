@@ -7,7 +7,7 @@ import {
     StyleSheet,
     Image
 } from "@react-pdf/renderer";
-import { rootPath } from "../utils/code-utils";
+import { readFilePath } from "../utils/code-utils";
 
 
 interface PDFProps {
