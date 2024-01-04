@@ -5,6 +5,7 @@ import { Request, Response } from 'express';
 import { hash } from "../utils/hash-utils";
 import { prisma } from "../config";
 
+
 // get all students
 export const getAll = async (req: Request, res: Response) => {
   try {

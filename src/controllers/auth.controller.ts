@@ -274,4 +274,14 @@ export const newPassword = async (req: Request, res: Response) => {
     return res.status(400).json({ message: error });
   }
 };
+// get all admin
+export const getAllAdmin = async (req: Request, res: Response) => {
+  try {
+    const users = await prisma.user.findMany();
+    res.status(200).json({ status: true, data: users });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+};
 
