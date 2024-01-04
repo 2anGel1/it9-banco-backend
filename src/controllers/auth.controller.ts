@@ -24,14 +24,14 @@ export const login = async (req: Request, res: Response) => {
     });
 
     if (!user) {
-      return res.status(400).json({ message: "Email incorrecte." });
+      return res.status(200).json({ status: false, message: "Email incorrecte." });
     }
     const isPasswordValid = comparePlainTextToHashedText(
       password,
       user.passwordHash!
     );
     if (!isPasswordValid) {
-      return res.status(400).json({ message: "Mot de passe incorrect." });
+      return res.status(200).json({ status: false, message: "Mot de passe incorrect." });
     }
 
     const sessionId = await createSession(user.id);
@@ -42,7 +42,7 @@ export const login = async (req: Request, res: Response) => {
     // console.log(error);
     if (error.code == "E_VALIDATION_ERROR") {
       console.log("Erreur de validation");
-      return res.status(error.status).json({ message: "Remplissez tous les champs correctement" })
+      return res.status(200).json({ status: false, message: "Remplissez tous les champs correctement" })
     }
     return res.status(500).json({ message: "Erreur interne au serveur" });
   }
@@ -83,7 +83,7 @@ export const signup = async (req: Request, res: Response) => {
       },
     });
     if (existingUser) {
-      return res.status(400).json({ message: "Cet utilisateur existe déjà." });
+      return res.status(200).json({ status: false, message: "Cet utilisateur existe déjà." });
     }
 
     await prisma.user.create({
@@ -100,7 +100,7 @@ export const signup = async (req: Request, res: Response) => {
     // console.log(error);
     if (error.code == "E_VALIDATION_ERROR") {
       console.log("Erreur de validation");
-      return res.status(error.status).json({ message: "Remplissez tous les champs correctement" })
+      return res.status(200).json({ status: false, message: "Remplissez tous les champs correctement" })
     }
     return res.status(500).json({ message: "Erreur interne au serveur" });
   }
