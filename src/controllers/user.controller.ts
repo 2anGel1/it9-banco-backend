@@ -1,4 +1,6 @@
 import { storeStudentValidator } from "../validators/user-validators";
+const readXlsxFile = require('read-excel-file/node');
+import { deleteFile } from "../utils/pdf-utils";
 import { Request, Response } from 'express';
 import { hash } from "../utils/hash-utils";
 import { prisma } from "../config";
@@ -11,7 +13,7 @@ export const getAll = async (req: Request, res: Response) => {
         pass: true
       }
     });
-    res.json({ data: students });
+    res.status(200).json({ status: true, data: students });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
@@ -34,7 +36,7 @@ export const storeStudent = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Cet étudiant existe déja." });
     }
 
-    const et = await prisma.etutiant.create({
+    const etudiant = await prisma.etutiant.create({
       data: {
         firstName: userData.firstName,
         lastName: userData.lastName,
@@ -43,16 +45,14 @@ export const storeStudent = async (req: Request, res: Response) => {
       }
     });
 
-    if (reqBody.pass) {
-      await prisma.pass.create({
-        data: {
-          etudiantId: et.id,
-          qrValue: hash(et.matricule)
-        }
-      });
-    }
+    await prisma.pass.create({
+      data: {
+        etudiantId: etudiant.id,
+        qrValue: hash(etudiant.matricule)
+      }
+    });
 
-    return res.json({ message: "Etudiant crée avec succès." });
+    return res.status(200).json({ status: true, message: "Etudiant crée avec succès." });
 
   } catch (error) {
     console.error(error);
@@ -86,11 +86,70 @@ export const updateStudent = async (req: Request, res: Response) => {
       }
     });
 
-    return res.json({ message: "Etudiant mis à jour avec succès." });
+    return res.status(200).json({ status: true, message: "Etudiant mis à jour avec succès." });
 
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+// import users excel file
+export const storeFile = async (req: any, res: Response) => {
+  try {
+
+    const excel = req.files.file;
+
+    if (excel.mimetype != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+      res.status(400).json({ message: "Fichier invalide" });
+      deleteFile(excel.tempFilePath);
+    }
+
+    await readXlsxFile(excel.tempFilePath).then(async (rows: any) => {
+      await rows.forEach(async (row: any) => {
+        try {
+          const firstName = row[1];
+          const lastName = row[0];
+          const classe = row[2];
+          const email = row[3];
+
+          let exEtudiant = await prisma.etutiant.findUnique({
+            where: {
+              email: email
+            }
+          });
+
+          if (!exEtudiant) {
+            exEtudiant = await prisma.etutiant.create({
+              data: {
+                class: classe,
+                firstName,
+                lastName,
+                email,
+              }
+            });
+            await prisma.pass.create({
+              data: {
+                qrValue: hash(exEtudiant.matricule),
+                etudiantId: exEtudiant.id,
+              }
+            });
+          }
+        } catch (error) {
+          res.status(400).json({ message: "Le fichier n'est pas conforme" });
+        }
+
+      });
+    })
+
+    res.status(200).json({ status: true, message: "Fichier importé avec succès" });
+
+  } catch (error: any) {
+    console.log(error);
+    if (error.code == "ENOENT") {
+      console.log("File import issue");
+    }
+
+    res.status(400).json({ message: "Erreur interne au serveur" });
+  }
+}
 

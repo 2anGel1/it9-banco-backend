@@ -1,26 +1,14 @@
+import { verificationForPasswordResetValidator, passwordResetValidator, newPasswordValidator, signupValidator, loginValidator } from "../validators/auth-validators";
+import { generatePasswordResetToken, verifyPasswordResetToken } from "../utils/token-utils";
+import { passwordResetCookie, sessionIdCookie } from "../constants/cookies-constants";
 import { comparePlainTextToHashedText, hash } from "../utils/hash-utils";
 import PasswordResetMail from "../mail-template/password-reset-mail";
 import { createSession, leaveSession } from "../utils/session-utils";
 import { generateRandomCode } from "../utils/code-utils";
-import {
-  verificationForPasswordResetValidator,
-  passwordResetValidator,
-  newPasswordValidator,
-  signupValidator,
-  loginValidator,
-} from "../validators/auth-validators";
-import {
-  passwordResetCookie,
-  sessionIdCookie,
-} from "../constants/cookies-constants";
 import { sendMail } from "../utils/mail-utils";
 import { render } from "@react-email/render";
 import { Request, Response } from 'express';
 import { prisma } from "../config";
-import {
-  generatePasswordResetToken,
-  verifyPasswordResetToken,
-} from "../utils/token-utils";
 
 // login user
 export const login = async (req: Request, res: Response) => {
@@ -47,7 +35,7 @@ export const login = async (req: Request, res: Response) => {
 
   const sessionId = await createSession(user.id);
   res.cookie(sessionIdCookie.name, sessionId, sessionIdCookie.options)
-  return res.json({ message: "Login success" });
+  return res.status(200).json({ status: true, message: "Login success" });
 };
 // logout user
 export const logout = async (req: Request, res: Response) => {
@@ -62,7 +50,7 @@ export const logout = async (req: Request, res: Response) => {
       ...sessionIdCookie.options,
     });
 
-    res.json({ message: "Logout success" });
+    res.status(200).json({ status: true, message: "Logout success" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Internal Server Error" });
@@ -91,7 +79,7 @@ export const signup = async (req: Request, res: Response) => {
       }
     });
 
-    return res.json({ status: true, message: "Utilisateur crée avec succès." });
+    return res.status(200).json({ status: true, message: "Utilisateur crée avec succès." });
 
   } catch (error: any) {
     return res.status(400).json({ message: "Une erreur inconnue ai survenue !" });

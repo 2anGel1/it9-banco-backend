@@ -3,14 +3,13 @@ import React from "react";
 import Logo from "./logo";
 import { BaseMail, box, hr, paragraph, title, code } from "./base-mail";
 
-interface PasswordResetMail {
+interface PasswordResetMailProps {
   verificationCode: string;
 }
 
-const PasswordResetMail = ({ verificationCode }: PasswordResetMail) => {
+const PasswordResetMail = ({ verificationCode }: PasswordResetMailProps) => {
   return (
-    <BaseMail> 
-      {/* <Preview>a</Preview> */}
+    <BaseMail>
       <Section style={box}>
         <Logo />
         <Hr style={hr} />

@@ -1,18 +1,22 @@
+import { updateStudent, storeStudent, storeFile, getAll } from "../controllers/user.controller";
 import { requireAuth } from "../middlewares/auth.middleware";
-import {
-  updateStudent,
-  storeStudent,
-  getAll,
-} from "../controllers/user.controller";
+const fileUpload = require("express-fileupload");
 import { Router } from "express";
+
+const uploadsOpt = {
+  tempFileDir: "/tmp/",
+  useTempFiles: true,
+};
 
 const userRoute = Router();
 
-// get connected user
-userRoute.get("/all", requireAuth, getAll);
+// import excel file
+userRoute.post("/import-file", requireAuth, fileUpload(uploadsOpt), storeFile);
 // upadte student
-userRoute.put("/update", requireAuth, updateStudent);
+userRoute.post("/update", requireAuth, updateStudent);
 // store student
 userRoute.post("/store", requireAuth, storeStudent);
+// get connected user
+userRoute.get("/all", requireAuth, getAll);
 
 export default userRoute;

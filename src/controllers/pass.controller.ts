@@ -4,49 +4,8 @@ import { sendMail } from "../utils/mail-utils";
 import { readFilePath, writeFilePath } from "../utils/code-utils";
 import { render } from "@react-email/render";
 import { Request, Response } from 'express';
-import { hash } from "../utils/hash-utils";
 import { prisma } from "../config";
 
-// store student pass
-export const storePass = async (req: Request, res: Response) => {
-  try {
-
-    const reqBody = req.body;
-
-    const student = await prisma.etutiant.findUnique({
-      where: {
-        id: reqBody.studentId
-      }
-    });
-
-    if (student) {
-      const existingPass = await prisma.pass.findUnique({
-        where: {
-          etudiantId: student.id
-        }
-      });
-
-      if (existingPass) {
-        return res.status(400).json({ message: "Cet étudiant a déja un ticekt." });
-      }
-
-      await prisma.pass.create({
-        data: {
-          etudiantId: student.id,
-          qrValue: hash(student.matricule)
-        }
-      });
-
-      return res.json({ message: "Ticket généré avec succès." });
-    }
-
-    return res.status(400).json({ message: "Cet étudiant n'existe pas." });
-
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: 'Internal Server Error' });
-  }
-};
 // send student pass
 export const sendPass = async (req: Request, res: Response) => {
   try {
@@ -93,7 +52,7 @@ export const sendPass = async (req: Request, res: Response) => {
     await deleteFile(writeFilePath + "/pdf/" + fileName);
     await deleteFile(qrcodeWritePath);
 
-    return res.json({ message: "Ticket envoyé avec succès." });
+    return res.status(200).json({ status: true, message: "Ticket envoyé avec succès." });
 
   } catch (error) {
     console.error(error);
@@ -132,7 +91,7 @@ export const downloadPass = async (req: Request, res: Response) => {
       await generateQRCODE(studentPass.qrValue, qrcodeWritePath);
       const result = await generatePDF(fileName, { firstName: student.firstName, lastName: student.lastName, classe: student.class }, true, qrcodeReadPath);
       await deleteFile(qrcodeWritePath);
-      
+
       res.setHeader("Content-Type", "application/pdf");
       res.setHeader("Content-Disposition", `attachment; filename=${fileName}`);
 
