@@ -108,36 +108,22 @@ export const scanPass = async (req: Request, res: Response) => {
   try {
 
     const reqBody = req.body;
-    const { studentId, qrcodeValue } = await scanPassValidator.validate(reqBody);
-
-    const student = await prisma.etutiant.findFirst({
-      where: {
-        id: studentId
-      },
-      include: {
-        pass: true
-      }
-    });
-
-    if (!student) {
-      return res.status(200).json({ status: false, message: "Qr-code invalide" });
-    }
-
-    const isQrcodeValid = comparePlainTextToHashedText(student!.matricule, qrcodeValue);
-    if (!isQrcodeValid) {
-      return res.status(200).json({ status: false, message: "Qr-code invalide" });
-    }
+    const { qrcodeValue } = await scanPassValidator.validate(reqBody);
 
     let pass = await prisma.pass.findFirst({
       where: {
-        etudiantId: studentId
+        qrValue: qrcodeValue
       }
     });
+
+    if (!pass) {
+      return res.status(200).json({ status: false, message: "Qr-code invalide" });
+    }
 
     if (!pass?.aCheck) {
       await prisma.pass.update({
         where: {
-          etudiantId: studentId
+          qrValue: qrcodeValue
         },
         data: {
           aCheck: true
@@ -149,7 +135,7 @@ export const scanPass = async (req: Request, res: Response) => {
 
       await prisma.pass.update({
         where: {
-          etudiantId: studentId
+          qrValue: qrcodeValue
         },
         data: {
           dCheck: true
