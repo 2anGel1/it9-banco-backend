@@ -130,7 +130,7 @@ export const scanPass = async (req: Request, res: Response) => {
         }
       });
 
-      return res.status(200).json({ status: true, message: "Bienvenue" });
+      return res.status(200).json({ status: true, message: "L'utilisateur est présent" });
     } else if (!pass.dCheck) {
 
       await prisma.pass.update({
@@ -142,7 +142,7 @@ export const scanPass = async (req: Request, res: Response) => {
         }
       });
 
-      return res.status(200).json({ status: true, message: "Aurevoir" });
+      return res.status(200).json({ status: true, message: "L'utilisateur s'en va" });
     }
 
     return res.status(200).json({ status: false, message: "Qr-code expiré" });
