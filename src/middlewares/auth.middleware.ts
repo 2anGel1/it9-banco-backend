@@ -11,19 +11,19 @@ export const requireAuth = async (
   next: NextFunction
 ) => {
   try {
+    console.log(req.headers);
+    // const sessionId = await sessionIdValidator.validate(
+    //   req.cookies[sessionIdCookie.name]
+    // );
 
-    const sessionId = await sessionIdValidator.validate(
-      req.cookies[sessionIdCookie.name]
-    );
+    // const session = await getActiveSession(sessionId);
 
-    const session = await getActiveSession(sessionId);
-
-    if (session) {
-      req.body.session = session;
-      next();
-    } else {
-      res.status(401).json({ message: 'Unauthorized' });
-    }
+    // if (session) {
+    //   req.body.session = session;
+    //   next();
+    // } else {
+    //   res.status(401).json({ message: 'Unauthorized' });
+    // }
   } catch (error: any) {
     if (error.code == "E_VALIDATION_ERROR") {
       console.log("Erreur de validation");

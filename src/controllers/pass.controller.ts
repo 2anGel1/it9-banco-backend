@@ -1,7 +1,7 @@
 import PassMail from "../mail-template/pass-mail";
 import { generatePDF, logoAttachment, generateQRCODE, deleteFile } from "../utils/pdf-utils";
 import { sendMail } from "../utils/mail-utils";
-import { readFilePath, writeFilePath } from "../utils/code-utils";
+import { readFilePath, writeFilePath } from "../config/index";
 import { render } from "@react-email/render";
 import { Request, Response } from 'express';
 import { prisma } from "../config";

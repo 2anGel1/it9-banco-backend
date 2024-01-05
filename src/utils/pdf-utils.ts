@@ -1,4 +1,4 @@
-import { readFilePath, writeFilePath } from "../utils/code-utils";
+import { readFilePath, writeFilePath } from "../config/index";
 import PassCard from "../pdf-template/pass-pdf";
 import ReactPDF from "@react-pdf/renderer";
 const qr = require("qrcode");

@@ -15,7 +15,7 @@ authRoute.get('/all', getAllAdmin);
 // store an admin
 authRoute.post("/store", signup);
 // logout admin
-authRoute.get("/logout", logout);
+authRoute.get("/logout", requireAuth, logout);
 // sign up first user
 authRoute.post("/seed", signup);
 // login user

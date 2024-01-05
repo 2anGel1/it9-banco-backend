@@ -16,6 +16,7 @@ export const calculateSessionExpiration = () => {
 //
 
 export const createSession = async (userId: string ) => {
+  
   const sessionToken = generateSessionToken();
   const expires = calculateSessionExpiration();
 

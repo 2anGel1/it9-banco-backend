@@ -7,13 +7,12 @@ type MyCookie = {
 };
 
 export const sessionIdCookie: MyCookie = {
-  name: "sessionId",
+  name: "sessionToken",
   options: {
     path: "/",
     httpOnly: true,
     maxAge: ms("1y"),
-    secure: false,
-    // signed: true,
+    secure: process.env.NODE_ENV == "production",
   },
 };
 
