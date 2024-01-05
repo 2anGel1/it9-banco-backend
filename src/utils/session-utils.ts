@@ -6,30 +6,47 @@ export const generateSessionToken = () => {
 };
 
 export const calculateSessionExpiration = () => {
-    const currentDate = new Date();
-    const hoursToAdd = 24;
-    const expirationDate = new Date(currentDate.getTime() + hoursToAdd * 60 * 60 * 1000);
-    return expirationDate;
-  };
-  
+  const currentDate = new Date();
+  const hoursToAdd = 24;
+  const expirationDate = new Date(currentDate.getTime() + hoursToAdd * 60 * 60 * 1000);
+  return expirationDate;
+};
+
 //
 //
 
-export const createSession = async (userId: string ) => {
-  
+export const createSession = async (userId: string) => {
+
   const sessionToken = generateSessionToken();
   const expires = calculateSessionExpiration();
 
   try {
-    const session = await prisma.session.create({
-      data: {
+    let session = await prisma.session.findFirst({
+      where: {
         userId,
-        sessionToken,
-        expires,
-      },
+        OR: [
+          {
+            active: true
+          },
+          {
+            expires: {
+              gte: new Date(),
+            }
+          }
+        ]
+      }
     });
-
+    if (!session) {
+      session = await prisma.session.create({
+        data: {
+          userId,
+          sessionToken,
+          expires,
+        },
+      });
+    }
     return session.sessionToken;
+
   } catch (error) {
     console.error("Erreur lors de la création de la session :", error);
     throw error;
@@ -52,7 +69,7 @@ export const getActiveSession = async (sessionToken: string) => {
   });
 
   if (!session || !session.active) {
-    throw new Error("La session n'est pas active ou n'existe pas.");
+    return null;
   }
 
   return session;
@@ -61,24 +78,24 @@ export const getActiveSession = async (sessionToken: string) => {
 //
 //
 export const leaveSession = async (sessionToken: string) => {
-    const session = await prisma.session.findFirst({
-      where: {
-        sessionToken,
-        active: true,
-      },
-    });
-  
-    if (!session) {
-      throw new Error("La session n'est pas active ou n'existe pas.");
-    }
-  
-    await prisma.session.update({
-      where: {
-        sessionToken,
-      },
-      data: {
-        active: false,
-        expires: new Date(),
-      },
-    });
-  };
+  const session = await prisma.session.findFirst({
+    where: {
+      sessionToken,
+      active: true,
+    },
+  });
+
+  if (!session) {
+    throw new Error("La session n'est pas active ou n'existe pas.");
+  }
+
+  await prisma.session.update({
+    where: {
+      sessionToken,
+    },
+    data: {
+      active: false,
+      expires: new Date(),
+    },
+  });
+};

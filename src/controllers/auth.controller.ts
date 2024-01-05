@@ -35,11 +35,11 @@ export const login = async (req: Request, res: Response) => {
     }
 
     const sessionToken = await createSession(user.id);
-    // res.cookie(sessionIdCookie.name, sessionToken, sessionIdCookie.options)
-    return res.cookie(sessionIdCookie.name, sessionToken, sessionIdCookie.options).status(200).json({ status: true, message: "Login success", token: sessionToken });
+    return res.status(200).json({ status: true, message: "Login success", token: sessionToken });
 
   } catch (error: any) {
-    // console.log(error);
+
+    console.log(error);
     if (error.code == "E_VALIDATION_ERROR") {
       console.log("Erreur de validation");
       return res.status(200).json({ status: false, message: "Remplissez tous les champs correctement" })
@@ -52,7 +52,6 @@ export const login = async (req: Request, res: Response) => {
 export const logout = async (req: Request, res: Response) => {
   try {
     const sessionToken = req.body.session.sessionToken;
-
 
     await leaveSession(sessionToken);
 

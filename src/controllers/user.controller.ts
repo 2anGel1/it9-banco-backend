@@ -39,8 +39,8 @@ export const storeStudent = async (req: Request, res: Response) => {
 
     const etudiant = await prisma.etutiant.create({
       data: {
-        firstName: userData.firstName,
-        lastName: userData.lastName,
+        firstName: userData.firstName.toUpperCase(),
+        lastName: userData.lastName.toUpperCase(),
         class: userData.class,
         email: userData.email
       }
@@ -80,8 +80,8 @@ export const updateStudent = async (req: Request, res: Response) => {
         id: existingStudent.id
       },
       data: {
-        firstName: reqBody.firstName,
-        lastName: reqBody.lastName,
+        firstName: reqBody.firstName.toUpperCase(),
+        lastName: reqBody.lastName.toUpperCase(),
         class: reqBody.class,
         email: reqBody.email
       }
@@ -123,8 +123,8 @@ export const storeFile = async (req: any, res: Response) => {
             exEtudiant = await prisma.etutiant.create({
               data: {
                 class: classe,
-                firstName,
-                lastName,
+                firstName: firstName.toUpperCase(),
+                lastName: lastName.toUpperCase(),
                 email,
               }
             });

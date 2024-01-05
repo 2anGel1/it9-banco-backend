@@ -7,7 +7,7 @@ type MyCookie = {
 };
 
 export const sessionIdCookie: MyCookie = {
-  name: "sessionToken",
+  name: "sessionId",
   options: {
     path: "/",
     httpOnly: true,

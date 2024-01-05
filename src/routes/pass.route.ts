@@ -12,5 +12,6 @@ const passRoute = Router();
 passRoute.get("/download/:studentId", downloadPass);
 // send pass by email
 passRoute.get("/send/:studentId", sendPass);
+// scan pass qrcode
 
 export default passRoute;
