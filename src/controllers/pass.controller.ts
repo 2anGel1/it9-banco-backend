@@ -1,12 +1,12 @@
-import PassMail from "../mail-template/pass-mail";
 import { generatePDF, logoAttachment, generateQRCODE, deleteFile } from "../utils/pdf-utils";
-import { sendMail } from "../utils/mail-utils";
+import { comparePlainTextToHashedText } from "../utils/hash-utils";
+import { scanPassValidator } from "../validators/user-validators";
 import { readFilePath, writeFilePath } from "../config/index";
+import PassMail from "../mail-template/pass-mail";
+import { sendMail } from "../utils/mail-utils";
 import { render } from "@react-email/render";
 import { Request, Response } from 'express';
 import { prisma } from "../config";
-import { scanPassValidator } from "../validators/user-validators";
-import { comparePlainTextToHashedText } from "../utils/hash-utils";
 
 // send student pass
 export const sendPass = async (req: Request, res: Response) => {

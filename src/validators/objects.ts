@@ -1,5 +1,6 @@
 import vine from "@vinejs/vine";
 
-import { jwtSchema, idSchema } from "./schemas";
+import { studentIdSchema, qrCodeSchema } from "./schemas";
 
-export const scanPassSchema = vine.object({ qrcodeValue: jwtSchema, studentId: idSchema, });
+//
+export const scanPassSchema = vine.object({ qrcodeValue: qrCodeSchema, studentId: studentIdSchema, });

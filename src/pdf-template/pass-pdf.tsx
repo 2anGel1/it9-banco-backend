@@ -1,12 +1,22 @@
 import React from "react";
 import {
-    Page,
-    Text,
-    Document,
     StyleSheet,
-    Image
+    Document,
+    Image,
+    Text,
+    Page,
+    Font,
 } from "@react-pdf/renderer";
-import { readFilePath } from "../config/index";
+import { readFilePath, writeFilePath } from "../config/index";
+
+Font.register({
+    family: 'Montserrat',
+    fonts: [
+      {
+        src: writeFilePath + "/fonts/Montserrat-Bold.ttf",
+      },
+    ],
+  });
 
 const styles = StyleSheet.create({
     page: {
@@ -26,30 +36,30 @@ const styles = StyleSheet.create({
     },
     lastname: {
         position: "absolute",
-        top: 70,
+        top: 75,
         left: 162,
 
-        fontWeight: "extrabold",
+        fontFamily: 'Montserrat',
         color: "#ffffff",
 
         fontSize: 15
     },
     firstname: {
         position: "absolute",
-        top: 90,
+        top: 95,
         left: 162,
 
-        fontWeight: "extrabold",
+        fontFamily: 'Montserrat',
         color: "#ffffff",
 
         fontSize: 15
     },
     classe: {
         position: "absolute",
-        top: 145,
+        top: 140,
         left: 162,
 
-        fontWeight: "extrabold",
+        fontFamily: 'Montserrat',
         color: "#ffffff",
 
         fontSize: 15
@@ -71,24 +81,21 @@ function PassCard({ user, qrcodePath }: PDFProps) {
     return (
         <Document>
             <Page size="A4" style={styles.page}>
-                <div className="relative">
-                    <Image
-                        src={readFilePath + "/images/ticket.png"}
-                        style={styles.pass}
-                    />
+                <Image
+                    src={readFilePath + "/images/ticket.png"}
+                    style={styles.pass}
+                />
 
-                    <Text style={styles.lastname}>{user?.lastName?.toUpperCase()}</Text>
-                    <Text style={styles.firstname}>{user?.firstName?.toUpperCase()}</Text>
-                    <Text style={styles.classe}>{user?.classe}</Text>
+                <Text style={styles.lastname}>{user?.lastName?.toUpperCase()}</Text>
+                <Text style={styles.firstname}>{user?.firstName?.toUpperCase()}</Text>
+                <Text style={styles.classe}>{user?.classe}</Text>
 
-                    <Image
-                        src={qrcodePath}
-                        style={styles.qrcode}
-                    />
-                </div>
+                <Image
+                    src={qrcodePath}
+                    style={styles.qrcode}
+                />
             </Page>
         </Document>
-
     );
 }
 

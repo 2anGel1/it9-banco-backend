@@ -33,7 +33,6 @@ export const storeStudentSchema = vine.object({
 export const updateUserPasswordValidator = vine.compile(updateUserPasswordSchema);
 //
 export const storeStudentValidator = vine.compile(storeStudentSchema);
-
 //
 export const scanPassValidator = vine.compile(scanPassSchema)
 
