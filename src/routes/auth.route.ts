@@ -11,11 +11,11 @@ authRoute.post("/password-reset/new-password", newPassword);
 // password reset: initialisation
 authRoute.post("/password-reset", passwordReset);
 // get all admin
-authRoute.get('/all', requireAuth, getAllAdmin);
+authRoute.get('/all', getAllAdmin);
 // store an admin
-authRoute.post("/store", requireAuth, signup);
+authRoute.post("/store", signup);
 // logout admin
-authRoute.get("/logout", requireAuth, logout);
+authRoute.get("/logout", logout);
 // sign up first user
 authRoute.post("/seed", signup);
 // login user
