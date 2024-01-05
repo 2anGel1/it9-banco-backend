@@ -17,14 +17,17 @@ export const requireAuth = async (
     );
 
     const session = await getActiveSession(sessionId);
-    
+
     if (session) {
       req.body.session = session;
       next();
     } else {
       res.status(401).json({ message: 'Unauthorized' });
     }
-  } catch (error) {
-    res.status(401).json({ message: 'Unauthorized' });
+  } catch (error: any) {
+    if (error.code == "E_VALIDATION_ERROR") {
+      console.log("Erreur de validation");
+      return res.status(200).json({ status: false, message: "Remplissez tous les champs correctement" })
+    } res.status(401).json({ message: 'Unauthorized' });
   }
 };
