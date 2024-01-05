@@ -12,7 +12,8 @@ export const sessionIdCookie: MyCookie = {
     path: "/",
     httpOnly: true,
     maxAge: ms("1y"),
-    secure: process.env.NODE_ENV == "production",
+    secure: false,
+    // signed: true,
   },
 };
 
