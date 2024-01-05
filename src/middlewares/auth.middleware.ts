@@ -1,9 +1,7 @@
 const session = require('express-session');
 const cookieParser = require("cookie-parser");
 import { Request, Response, NextFunction } from 'express';
-import { sessionIdCookie } from "../constants/cookies-constants";
 import { getActiveSession } from "../utils/session-utils";
-import { sessionIdValidator } from "../validators/auth-validators";
 
 export const requireAuth = async (
   req: Request,
@@ -12,6 +10,8 @@ export const requireAuth = async (
 ) => {
   try {
 
+    console.log(req.headers);
+    
     const tok = req.headers.authorization?.toString();
     const sessionToken = tok?.substring(7, tok.length);
     
