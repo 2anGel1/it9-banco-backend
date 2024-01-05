@@ -11,7 +11,7 @@ export const getAll = async (req: Request, res: Response) => {
   try {
     const reqBody = req.body;
     let students: Array<any> = [];
-    
+
     if (!reqBody.filter) {
 
       students = await prisma.etutiant.findMany({
@@ -118,7 +118,7 @@ export const storeFile = async (req: any, res: Response) => {
     const excel = req.files.file;
 
     if (excel.mimetype != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
-      res.status(400).json({ message: "Fichier invalide" });
+      res.status(200).json({ message: "Fichier invalide" });
       deleteFile(excel.tempFilePath);
     }
 
@@ -153,7 +153,7 @@ export const storeFile = async (req: any, res: Response) => {
             });
           }
         } catch (error) {
-          res.status(400).json({ message: "Le fichier n'est pas conforme" });
+          res.status(200).json({ message: "Fichier invalide" });
         }
 
       });
@@ -163,11 +163,13 @@ export const storeFile = async (req: any, res: Response) => {
 
   } catch (error: any) {
     console.log(error);
-    if (error.code == "ENOENT") {
+    if (error.code == 'ENOENT' || error.errno == -2) {
       console.log("File import issue");
+      res.status(200).json({ message: "Fichier invalide" });
+    }else if(error.code == 'ERR_HTTP_HEADERS_SENT'){
+      res.status(200).json({ message: "Fichier invalide" });
     }
-
-    res.status(400).json({ message: "Erreur interne au serveur" });
+    res.status(500).json({ message: "Erreur interne au serveur" });
   }
 }
 
