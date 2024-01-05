@@ -17,6 +17,6 @@ userRoute.post("/update", updateStudent);
 // store student
 userRoute.post("/store", storeStudent);
 // get connected user
-userRoute.get("/all", getAll);
+userRoute.post("/all", getAll);
 
 export default userRoute;
