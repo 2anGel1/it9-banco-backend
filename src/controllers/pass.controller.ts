@@ -1,5 +1,4 @@
 import { generatePDF, logoAttachment, generateQRCODE, deleteFile } from "../utils/pdf-utils";
-import { comparePlainTextToHashedText } from "../utils/hash-utils";
 import { scanPassValidator } from "../validators/user-validators";
 import { readFilePath, writeFilePath } from "../config/index";
 import PassMail from "../mail-template/pass-mail";

@@ -9,11 +9,28 @@ import { prisma } from "../config";
 // get all students
 export const getAll = async (req: Request, res: Response) => {
   try {
-    const students = await prisma.etutiant.findMany({
-      include: {
-        pass: true
-      }
-    });
+    const reqBody = req.body;
+    let students: Array<any> = [];
+    
+    if (!reqBody.filter) {
+
+      students = await prisma.etutiant.findMany({
+        include: {
+          pass: true
+        }
+      });
+
+    } else {
+
+      students = await prisma.etutiant.findMany({
+        where: {
+          pass: reqBody.filter == "a" ? {
+            aCheck: true
+          } : { dCheck: true }
+        }
+      });
+
+    }
     res.status(200).json({ status: true, data: students });
   } catch (error) {
     console.error(error);
