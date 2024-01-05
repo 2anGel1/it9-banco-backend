@@ -8,7 +8,6 @@ import express from "express";
 const cors = require("cors");
 import path from 'path';
 import ms from "ms";
-import { readFilePath } from "./config/index";
 
 declare module "express" {
   interface Request {
