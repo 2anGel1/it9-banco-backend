@@ -9,11 +9,11 @@ import { Router } from "express";
 
 const passRoute = Router();
 
+// send pass by email
+passRoute.get("/send/:studentId", requireAuth, sendPass);
 // download pass
 passRoute.get("/download/:studentId", downloadPass);
-// send pass by email
-passRoute.get("/send/:studentId", sendPass);
 // scan pass qrcode
-passRoute.post("/scan", scanPass);
+passRoute.post("/scan", requireAuth, scanPass);
 
 export default passRoute;

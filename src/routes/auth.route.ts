@@ -5,15 +5,15 @@ import express from "express";
 const authRoute = express.Router();
 
 // password reset: finalisation
-authRoute.post("/password-reset/verification", verificationForPasswordReset);
+authRoute.post("/password-reset/verification", requireAuth, verificationForPasswordReset);
 // password reset: verification
-authRoute.post("/password-reset/new-password", newPassword);
+authRoute.post("/password-reset/new-password", requireAuth, newPassword);
 // password reset: initialisation
-authRoute.post("/password-reset", passwordReset);
+authRoute.post("/password-reset", requireAuth, passwordReset);
 // get all admin
-authRoute.get('/all', getAllAdmin);
+authRoute.get('/all', requireAuth, getAllAdmin);
 // store an admin
-authRoute.post("/store", signup);
+authRoute.post("/store", requireAuth, signup);
 // logout admin
 authRoute.get("/logout", requireAuth, logout);
 // sign up first user

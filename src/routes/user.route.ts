@@ -11,12 +11,12 @@ const uploadsOpt = {
 const userRoute = Router();
 
 // import excel file
-userRoute.post("/import-file", fileUpload(uploadsOpt), storeFile);
+userRoute.post("/import-file", requireAuth, fileUpload(uploadsOpt), storeFile);
 // upadte student
-userRoute.post("/update", updateStudent);
+userRoute.post("/update", requireAuth, updateStudent);
 // store student
-userRoute.post("/store", storeStudent);
+userRoute.post("/store", requireAuth, storeStudent);
 // get connected user
-userRoute.post("/all", getAll);
+userRoute.post("/all", requireAuth, getAll);
 
 export default userRoute;
