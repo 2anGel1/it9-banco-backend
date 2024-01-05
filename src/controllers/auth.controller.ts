@@ -35,8 +35,8 @@ export const login = async (req: Request, res: Response) => {
     }
 
     const sessionId = await createSession(user.id);
-    res.cookie(sessionIdCookie.name, sessionId, sessionIdCookie.options)
-    return res.status(200).json({ status: true, message: "Login success" });
+    // res.cookie(sessionIdCookie.name, sessionId, sessionIdCookie.options)
+    return res.cookie(sessionIdCookie.name, sessionId, sessionIdCookie.options).status(200).json({ status: true, message: "Login success" });
 
   } catch (error: any) {
     // console.log(error);
