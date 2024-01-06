@@ -9,8 +9,6 @@ export const requireAuth = async (
   next: NextFunction
 ) => {
   try {
-
-    console.log(req.headers);
     
     const tok = req.headers.authorization?.toString();
     const sessionToken = tok?.substring(7, tok.length);

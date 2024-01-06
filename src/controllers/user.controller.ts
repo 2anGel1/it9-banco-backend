@@ -82,6 +82,8 @@ export const updateStudent = async (req: Request, res: Response) => {
   try {
 
     const reqBody = req.body;
+    console.log(reqBody);
+    
     const existingStudent = await prisma.etutiant.findUnique({
       where: {
         id: reqBody.studentId
