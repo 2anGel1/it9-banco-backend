@@ -283,4 +283,40 @@ export const getAllAdmin = async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+// delete admin
+export const deleteAdmin = async (req: Request, res: Response) => {
+
+  try {
+
+    const id = req.params.adminId;
+
+    const admin = await prisma.user.findUnique({
+      where: {
+        id
+      }
+    });
+
+    if (!admin) {
+      return res.status(200).json({ status: false, message: "Id invalide" });
+    }
+
+    if(admin.email == "admin@gmail.com") {
+      return res.status(200).json({ status: false, message: "Cet utilisateur ne peut pas être supprimé" });
+    }
+
+    await prisma.user.delete({
+      where: {
+        id
+      }
+    });
+
+    return res.status(200).json({ status: true, message: "Étudiant supprimé avec succès" });
+
+  } catch (error) {
+
+    return res.status(500).json({message: "Erreur interne au serveur" });
+
+  }
+
+}
 

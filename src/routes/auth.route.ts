@@ -1,4 +1,4 @@
-import { login, logout, newPassword, passwordReset, signup, verificationForPasswordReset, getAllAdmin } from "../controllers/auth.controller";
+import { login, logout, newPassword, passwordReset, signup, verificationForPasswordReset, getAllAdmin, deleteAdmin } from "../controllers/auth.controller";
 import { requireAuth } from "../middlewares/auth.middleware";
 import express from "express";
 
@@ -8,6 +8,8 @@ const authRoute = express.Router();
 authRoute.post("/password-reset/verification", requireAuth, verificationForPasswordReset);
 // password reset: verification
 authRoute.post("/password-reset/new-password", requireAuth, newPassword);
+// sign up first user
+authRoute.delete("/delete/:adminId", requireAuth, deleteAdmin);
 // password reset: initialisation
 authRoute.post("/password-reset", requireAuth, passwordReset);
 // get all admin
