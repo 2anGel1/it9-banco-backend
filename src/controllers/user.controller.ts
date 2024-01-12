@@ -83,7 +83,7 @@ export const updateStudent = async (req: Request, res: Response) => {
 
     const reqBody = req.body;
     console.log(reqBody);
-    
+
     const existingStudent = await prisma.etutiant.findUnique({
       where: {
         id: reqBody.studentId
@@ -165,13 +165,46 @@ export const storeFile = async (req: any, res: Response) => {
 
   } catch (error: any) {
     console.log(error);
-    if (error.code == 'ENOENT' || error.errno == -2) {
+    if (error.code == 'ERR_HTTP_HEADERS_SENT' || error.code == 'ENOENT' || error.errno == -2) {
       console.log("File import issue");
-      res.status(200).json({ message: "Fichier invalide" });
-    }else if(error.code == 'ERR_HTTP_HEADERS_SENT'){
       res.status(200).json({ message: "Fichier invalide" });
     }
     res.status(500).json({ message: "Erreur interne au serveur" });
   }
-}
+};
+// delete student
+export const deleteStudent = async (req: Request, res: Response) => {
+  try {
+
+    const id = req.params.studentId;
+
+    const student = await prisma.etutiant.findUnique({
+      where: {
+        id
+      }
+    });
+
+    if (!student) {
+      return res.status(200).json({ status: false, message: "Id invalide" });
+    }
+
+    await prisma.pass.delete({
+      where: {
+        etudiantId: id
+      }
+    });
+
+    await prisma.etutiant.delete({
+      where: {
+        id
+      }
+    });
+
+    return res.status(200).json({ status: true, message: "Étudiant supprimé avec succès" });
+
+
+  } catch (error: any) {
+
+  }
+};
 
