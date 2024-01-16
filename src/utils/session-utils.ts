@@ -24,19 +24,12 @@ export const createSession = async (userId: string) => {
     let session = await prisma.session.findFirst({
       where: {
         userId,
-        OR: [
-          {
-            active: true
-          },
-          {
-            expires: {
-              gte: new Date(),
-            }
-          }
-        ]
+        expires: {
+          gte: new Date(),
+        }
       }
     });
-    if (!session) {
+    if (!session || !session.active) {
       session = await prisma.session.create({
         data: {
           userId,
