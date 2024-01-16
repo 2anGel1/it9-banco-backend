@@ -31,7 +31,7 @@ export const sendPass = async (req: Request, res: Response) => {
       return res.status(200).json({ status: false, message: "Cet étudiant n'a pas de ticket." });
     }
 
-    const fileName = student.lastName + ".pdf";
+    const fileName = student.lastName + ' ' + student.firstName + ".pdf";
     const qrcodeWritePath = writeFilePath + "/qrcodes/" + student.lastName + ".png";
     const qrcodeReadPath = readFilePath + "/qrcodes/" + student.lastName + ".png";
 
@@ -84,7 +84,7 @@ export const downloadPass = async (req: Request, res: Response) => {
       return res.status(200).json({ status: false, message: "Cet étudiant n'a pas de ticket." });
     }
 
-    const fileName = student.lastName + ".pdf";
+    const fileName = student.lastName + ' ' + student.firstName + ".pdf";
     const qrcodeWritePath = writeFilePath + "/qrcodes/" + student.lastName + ".png";
     const qrcodeReadPath = readFilePath + "/qrcodes/" + student.lastName + ".png";
 

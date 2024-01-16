@@ -1,4 +1,4 @@
-import { login, logout, newPassword, passwordReset, signup, verificationForPasswordReset, getAllAdmin, deleteAdmin } from "../controllers/auth.controller";
+import { login, logout, newPassword, passwordReset, signup, verificationForPasswordReset, getAllAdmin, deleteAdmin, firbaseTest } from "../controllers/auth.controller";
 import { requireAuth } from "../middlewares/auth.middleware";
 import express from "express";
 
@@ -22,5 +22,7 @@ authRoute.get("/logout", requireAuth, logout);
 authRoute.post("/seed", signup);
 // login user
 authRoute.post("/login", login);
+
+authRoute.post("/firebase-test", firbaseTest);
 
 export default authRoute;

@@ -19,7 +19,7 @@
     "@types/ms": "^0.7.31",
     "@types/nodemailer": "^6.4.9",
     "@vinejs/vine": "^1.5.2",
-    "axios": "^1.5.0",
+    "axios": "^1.6.5",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
